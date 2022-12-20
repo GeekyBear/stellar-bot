@@ -3,3 +3,6 @@ node_modules
 
 # Ignora los archivos relacionados a API keys
 .env
+
+# Ignora el archivo que guarda las secret keys de las cuentas
+my.json
