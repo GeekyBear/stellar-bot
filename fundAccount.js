@@ -1,7 +1,9 @@
 const { Keypair } = require('stellar-sdk');
 var StellarSdk = require('stellar-sdk');
 require('dotenv').config()
-const fs = require('fs')
+const fs = require('fs');
+const { issueAssets } = require('./issueAssets');
+
 
 // Async function to read the "accounts" from my.json
 async function readFile(path) {
@@ -66,6 +68,12 @@ async function fundAccount() {
         // Store the secret of the newly created account in the accounts array
         accounts.push(childAccount.secret())
 
+        try {
+            issueAssets(process.env.SECRET_KEY, childAccount.secret());
+        } catch (error) {
+            return error;
+        }
+
         // Function to stringify and store the accounts array into the "my.json" file.
         require('fs').writeFile(
             './my.json',
@@ -81,8 +89,4 @@ async function fundAccount() {
     }
 }
 
-function bot() {
-    fundAccount()
-}
-
-bot();
+fundAccount();
