@@ -69,8 +69,14 @@ async function fundAccount() {
         accounts.push(childAccount.secret())
 
         try {
-            issueAssets(process.env.SECRET_KEY, childAccount.secret());
+            setTimeout(function () {
+                console.log('Issuing assets')
+                issueAssets(process.env.SECRET_KEY, childAccount.secret());
+            }, 10000);
         } catch (error) {
+            console.log(error.response);
+            console.log(error.status);
+            console.log(error.extras);
             return error;
         }
 
@@ -89,4 +95,4 @@ async function fundAccount() {
     }
 }
 
-fundAccount();
+setInterval(fundAccount, 60000); // Waiting time => X Seconds * 1000

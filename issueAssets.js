@@ -34,7 +34,7 @@ function issueAssets(issuer, receiver) {
             transaction.sign(receivingKeys);
             return server.submitTransaction(transaction);
         })
-        .then(console.log)
+        // .then(console.log)
 
         // Second, the issuing account actually sends a payment using the asset
         .then(function () {
@@ -49,7 +49,7 @@ function issueAssets(issuer, receiver) {
                     StellarSdk.Operation.payment({
                         destination: receivingKeys.publicKey(),
                         asset: ARSX,
-                        amount: "10",
+                        amount: "100000",
                     }),
                 )
                 // setTimeout is required for a transaction
