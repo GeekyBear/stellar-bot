@@ -2,7 +2,7 @@ const { Keypair } = require('stellar-sdk');
 var StellarSdk = require('stellar-sdk');
 require('dotenv').config()
 const fs = require('fs');
-const { issueAssets } = require('./issueAssets');
+const { issueAssets } = require('../../issueAssets');
 
 
 // Async function to read the "accounts" from my.json
@@ -17,10 +17,11 @@ async function readFile(path) {
     });
 }
 
-// Get the pair from the source account with the secret stored in the .env file ;)
-var pair = Keypair.fromSecret(process.env.SECRET_KEY)
+async function fundAccount(accountSecret, token) {
+    console.log('Entre a la funcion fundAccount')
+    // Get the pair from the source account with the secret stored in the .env file ;)
+    var pair = Keypair.fromSecret(accountSecret);
 
-async function fundAccount() {
     var json = await readFile("my.json"); // File reading
     var accounts = JSON.parse(json); // The data needs parsing before using it.
 
@@ -44,7 +45,7 @@ async function fundAccount() {
                     startingBalance: "5",
                 }),
             )
-            .setTimeout(180)
+            .setTimeout(1000)
             .build();
 
         // Sign the transaction with the account that was created from friendbot.
@@ -62,8 +63,8 @@ async function fundAccount() {
                 return error;
             });
 
-        console.log('Transaction response: ', txResponse);
-        console.log("Created the new account", childAccount.publicKey());
+        //console.log('Transaction response: ', txResponse);
+        //console.log("Created the new account", childAccount.publicKey());
 
         // Store the secret of the newly created account in the accounts array
         accounts.push(childAccount.secret())
@@ -71,8 +72,8 @@ async function fundAccount() {
         try {
             setTimeout(function () {
                 console.log('Issuing assets')
-                issueAssets(process.env.SECRET_KEY, childAccount.secret());
-            }, 10000);
+                issueAssets(accountSecret, childAccount.secret());
+            }, 15000);
         } catch (error) {
             console.log(error.response);
             console.log(error.status);
@@ -81,18 +82,21 @@ async function fundAccount() {
         }
 
         // Function to stringify and store the accounts array into the "my.json" file.
-        require('fs').writeFile(
-            './my.json',
+        fs.writeFile(
+            'my.json',
             JSON.stringify(accounts),
             function (err) {
                 if (err) {
                     console.error('No se pudo guardar');
                 }
             }
-        );
+        )
+
+        return { msg: 'Se creo correctamente la cuenta ' + childAccount.publicKey() }
     } catch (e) {
         console.error("ERROR!", e);
     }
 }
 
 //setInterval(fundAccount, 60000); // Waiting time => X Seconds * 1000
+module.exports = fundAccount;

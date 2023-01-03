@@ -1,0 +1,13 @@
+.container {
+    display: flex;
+}
+
+.left {
+    width: 50%;
+    padding: 24px;
+}
+
+.right {
+    width: 50%;
+    padding: 24px;
+}
